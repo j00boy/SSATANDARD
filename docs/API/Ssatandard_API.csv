@@ -1,0 +1,54 @@
+﻿화면,API,HTTP,기능,설명,BackEnd,FrontEnd,최종 편집 일시,최종 편집자,그룹화
+메인 페이지,/,GET,"신상품순 조회
+판매량순 조회
+로그인 유도
+HeaderNav 바 변경
+로그아웃
+
+검색
+광고배너
+Carousel","{userId}로 조회해야 하는 정보에 대해 값이 없을 경우 로그인 창으로 유도 -> cart
+loginUser의 유무를 session에서 확인해서 headerNav 내 a태그 변경",No,No,2024년 5월 10일 오후 2:45,윤홍 김,/
+로그인,/login,GET,로그인 화면,"입력값의 경우 JS 내 정규 표현식을 활용해서 해결
+userId, password 동일 여부로 파악
+
+Spring Security",No,No,2024년 5월 10일 오후 11:36,주형 김,/
+메인페이지,/,POST,로그인 성공,로그아웃의 경우 session 만료,No,No,2024년 5월 10일 오후 11:36,주형 김,/
+회원가입,/signup,GET,회원가입,"[userId, password, userName, phoneNumber, isAdmin]을 입력받아 회원가입
+- 조건: 8자 이상
+이미 존재하는 userId의 경우 회원가입 불가
+isAdmin의 경우 별도 회원가입 시 입력 못함
+입력값의 경우 JS 내 정규 표현식을 활용해서 해결
+
+address API 사용",Yes,No,2024년 5월 10일 오후 11:35,주형 김,/
+게시판,/product/{categoryId},GET,카테고리별 상품 조회,"신상품순 조회
+판매량순 조회",No,No,2024년 5월 10일 오후 2:45,윤홍 김,product
+게시판,/product/detail/{productId},GET,상품 상세정보 확인,-,No,No,2024년 5월 10일 오후 2:45,윤홍 김,product
+게시판,/cart,POST,장바구니 담기,동일 userId로 갖는 레이블 중 같은 productId를 갖는 값이 있으면 수량 조정으로 변경 / 없으면 DB 추가,No,No,2024년 5월 10일 오후 4:39,윤홍 김,cart
+회원가입,/signup,POST,회원가입 성공,관리자 계정의 경우 DB 직접 추가,Yes,No,2024년 5월 10일 오후 11:35,주형 김,/
+장바구니,/cart,GET,장바구니 화면,cart 테이블 내 동일 userId로 갖는 레이블 조회,No,No,2024년 5월 10일 오후 2:42,윤홍 김,cart
+장바구니,/cart/{cartId},DELETE,장바구니 개별 품목 삭제,해당 cartId 레이블 삭제,No,No,2024년 5월 10일 오후 2:42,윤홍 김,cart
+장바구니,/cart,DELETE,장바구니 전체 삭제,userId가 갖는 모든 레이블 삭제,No,No,2024년 5월 10일 오후 2:42,윤홍 김,cart
+장바구니,/cart,PUT,장바구니 수량 조정,0으로 변경 시 DELETE,No,No,2024년 5월 10일 오후 4:35,주형 김,cart
+결제,/cart/order,GET,결제하기 화면,orderForm으로 forward,No,No,2024년 5월 10일 오후 2:42,윤홍 김,cart
+결제,/cart/order,POST,결제하기,결제 시 order 레이블 생성,No,No,2024년 5월 10일 오후 2:42,윤홍 김,cart
+마이페이지,/mypage,GET,마이페이지,-,No,No,2024년 5월 10일 오후 2:44,윤홍 김,mypage
+마이페이지,/mypage/orders,GET,주문내역 확인,생성일 순 조회,No,No,2024년 5월 10일 오후 2:44,윤홍 김,mypage
+마이페이지,/mypage/edit,PUT,회원정보 수정,"userId, phoneNumber, isAdmin은 변경 불가",No,No,2024년 5월 10일 오후 2:44,윤홍 김,mypage
+회원 탈퇴,/mypage/withdraw,GET,회원 탈퇴 화면,-,No,No,2024년 5월 10일 오후 2:44,윤홍 김,mypage
+회원 탈퇴,/mypage/withdraw,POST,회원 탈퇴,password 입력값이 loginUser가 갖는 password와 일치여부 확인,No,No,2024년 5월 10일 오후 2:44,윤홍 김,mypage
+관리자,/admin,GET,관리자 메인,-,No,No,2024년 5월 10일 오후 2:41,윤홍 김,admin
+관리자,/admin/products,GET,관리자 상품관리,"- 생성일순 조회
+- 카테고리별 조회
+- 판매량순 조회
+
+- 재고순 조회",No,No,2024년 5월 10일 오후 2:41,윤홍 김,admin
+관리자,/admin/regist,POST,관리자 상품 등록,-,No,No,2024년 5월 10일 오후 2:41,윤홍 김,admin
+관리자,/admin/orders,GET,관리자 주문관리,"주문 조회
+- 생성일 순",No,No,2024년 5월 10일 오후 2:41,윤홍 김,admin
+관리자,/admin/regist,GET,상품등록 화면,-,No,No,2024년 5월 10일 오후 2:40,윤홍 김,admin
+관리자,/admin/users,GET,관리자 유저관리,"가입 유저 조회
+- 생성일순
+
+- 이름순",No,No,2024년 5월 10일 오후 2:50,윤홍 김,admin
+마이페이지,/mypage/edit,GET,회원정보 수정 화면,-,No,No,2024년 5월 10일 오후 2:44,윤홍 김,mypage

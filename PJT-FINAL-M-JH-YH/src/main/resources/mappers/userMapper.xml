@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.ssatandard.model.dao.UserDao">
+
+    <!-- 회원가입 -->
+    <!-- insert 문은 users 테이블에 새로운 사용자를 추가합니다.
+         useGeneratedKeys="true"와 keyProperty="userId"는 자동 생성된 키 값을 반환합니다. -->
+    <insert id="insertUser" parameterType="User" useGeneratedKeys="true" keyProperty="userId">
+        INSERT INTO users (userId, password, userName, phoneNumber, address)
+        VALUES (#{userId}, #{password}, #{userName}, #{phoneNumber}, #{address});
+    </insert>
+    
+    <!-- 로그인 -->
+    <!-- select 문은 users 테이블에서 특정 userId와 password에 해당하는 사용자를 조회합니다.
+         parameterType="Map"는 사용자 정보를 담은 맵을 파라미터로 받습니다.
+         resultType="User"는 결과가 User 객체로 반환됨을 나타냅니다. -->
+    <select id="selectOne" parameterType="Map" resultType="User">
+        SELECT userId, password, userName, phoneNumber, isAdmin, address, image, DATE_FORMAT(createdAt, '%Y-%m-%d %H:%i:%s') AS regDate
+        FROM users
+        WHERE userId = #{userId} AND password = #{password}; 
+    </select>
+    
+    <!-- 전체 회원 조회 및 검색 기능 -->
+    <!-- select 문은 users 테이블에서 검색 조건에 맞는 사용자를 조회합니다.
+         parameterType="SearchCondition"는 검색 조건을 담은 객체를 파라미터로 받습니다.
+         resultType="User"는 결과가 User 객체의 리스트로 반환됨을 나타냅니다. -->
+    <select id="search" parameterType="SearchCondition" resultType="User">
+        SELECT
+            userId,
+            password,
+            userName,
+            phoneNumber,
+            isAdmin,
+            address,
+            image,
+            DATE_FORMAT(createdAt, '%Y-%m-%d %H:%i:%s') AS regDate,
+            (SELECT SUM(totalPrice)
+                FROM orders
+                WHERE userId = users.userId
+                GROUP BY userId) AS totalOrderPrice
+        FROM users
+        <where>
+            <if test="categoryId != null and categoryId != 'none'">
+                categoryId = #{categoryId}
+            </if>
+            <if test="key != null and key != 'none'">
+                <if test="categoryId != null and categoryId != 'none'">
+                    AND
+                </if>
+                ${key} LIKE CONCAT('%', #{word}, '%')
+            </if>
+        </where>
+        <if test="orderByDir != null and orderBy != 'none'">
+            ORDER BY ${orderBy} ${orderByDir}
+        </if>
+        <if test="orderBy == 'none'">
+        	ORDER BY regDate DESC;
+        </if>
+        
+    </select>
+    
+    <!-- userId로 유저 조회 -->
+    <!-- select 문은 users 테이블에서 특정 userId에 해당하는 사용자를 조회합니다.
+         parameterType="String"는 사용자 ID를 파라미터로 받습니다.
+         resultType="User"는 결과가 User 객체로 반환됨을 나타냅니다. -->
+    <select id="searchByUserId" parameterType="String" resultType="User">
+        SELECT userId, password, userName, phoneNumber, isAdmin, address, image, DATE_FORMAT(createdAt, '%Y-%m-%d %H:%i:%s') AS regDate
+        FROM users
+        WHERE userId = #{userId};
+    </select>
+    
+    <!-- 유저 삭제 -->
+    <!-- delete 문은 users 테이블에서 특정 userId에 해당하는 사용자를 삭제합니다.
+         parameterType="String"는 사용자 ID를 파라미터로 받습니다. -->
+    <delete id="deleteUser" parameterType="String">
+        DELETE FROM users
+        WHERE userId = #{userId};
+    </delete>
+    
+    <!-- 유저 정보 수정 -->
+    <!-- update 문은 users 테이블에서 특정 userId에 해당하는 사용자의 정보를 수정합니다.
+         parameterType="Map"는 수정할 정보를 담은 맵을 파라미터로 받습니다. -->
+    <update id="updateUser" parameterType="Map">
+        UPDATE users
+        SET password = #{password}, phoneNumber = #{phoneNumber}, address = #{address}
+        WHERE userId = #{userId};
+    </update>
+    
+</mapper>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.ssatandard.model.dao.CartDao">
+
+    <!-- 장바구니에 물품 추가 -->
+    <!-- insert 문은 carts 테이블에 새로운 장바구니 항목을 추가합니다. 
+         useGeneratedKeys="true"와 keyProperty="cartId"는 자동 생성된 키 값을 반환합니다. -->
+    <insert id="insertCart" parameterType="Cart" keyProperty="cartId" useGeneratedKeys="true">
+        INSERT INTO carts (userId, productId, productName, productPrice, amount, image)
+        VALUES (#{userId}, #{productId}, #{productName}, #{productPrice}, #{amount}, #{image});
+    </insert>
+
+    <!-- userId에 따른 장바구니 목록 전체 조회 -->
+    <!-- select 문은 특정 사용자의 모든 장바구니 항목을 조회합니다. 
+         resultType="Cart"는 결과가 Cart 객체의 리스트로 반환됨을 나타냅니다. -->
+    <select id="selectAll" resultType="Cart" parameterType="string">
+        SELECT cartId, productId, productName, productPrice, amount, image, DATE_FORMAT(createdAt, '%Y-%m-%d %H:%i') AS regDate
+        FROM carts
+        WHERE userId = #{userId}
+        ORDER BY regDate DESC;
+    </select>
+
+    <!-- 카트 원하는 품목 카트 삭제 -->
+    <!-- delete 문은 carts 테이블에서 특정 장바구니 항목을 삭제합니다. -->
+    <delete id="deleteCart" parameterType="int">
+        DELETE FROM carts
+        WHERE cartId = #{cartId};        
+    </delete>    
+
+    <!-- 해당 유저의 장바구니 전부 삭제 -->
+    <!-- delete 문은 carts 테이블에서 특정 사용자의 모든 장바구니 항목을 삭제합니다. -->
+    <delete id="deleteAll" parameterType="String">
+        DELETE FROM carts
+        WHERE userId = #{userId};
+    </delete>
+
+    <!-- 장바구니 수량 업데이트 -->
+    <!-- update 문은 carts 테이블에서 특정 장바구니 항목의 수량을 수정합니다. -->
+    <update id="updateCart" parameterType="Cart">
+        UPDATE carts
+        SET amount = #{amount}
+        WHERE cartId = #{cartId};
+    </update>
+
+    <!-- 카트 아이디로 찾기 -->
+    <!-- select 문은 carts 테이블에서 특정 cartId에 해당하는 장바구니 항목을 조회합니다. -->
+    <select id="selectOne" parameterType="int" resultType="Cart">
+        SELECT userId, productId, productName, productPrice, amount, image, DATE_FORMAT(createdAt, '%Y-%m-%d %H:%i:%s') AS regDate
+        FROM carts
+        WHERE cartId = #{cartId};
+    </select>
+
+    <!-- userId, productId로 찾기 -->
+    <!-- select 문은 carts 테이블에서 특정 userId와 productId에 해당하는 장바구니 항목을 조회합니다. -->
+    <select id="searchByUserIdAndProductId" parameterType="Map" resultType="Cart">
+        SELECT cartId, userId, productId, productName, productPrice, amount, image, DATE_FORMAT(createdAt, '%Y-%m-%d %H:%i:%s') AS regDate
+        FROM carts
+        WHERE userId = #{userId} AND productId = #{productId};
+    </select>
+
+</mapper>

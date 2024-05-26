@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.ssatandard.model.dao.ProductDao">
+
+    <!-- 전체 상품 조회 및 검색 기능 -->
+    <!-- select 문은 products 테이블에서 검색 조건에 맞는 상품을 조회합니다.
+         parameterType="SearchCondition"는 검색 조건을 담은 객체를 파라미터로 받습니다. -->
+    <select id="search" parameterType="SearchCondition" resultType="Product">
+        SELECT productId, productName, productPrice, productStock,
+        productSold, productInfo, categoryId, image, DATE_FORMAT(createdAt,
+        '%Y-%m-%d %H:%i:%s') AS regDate
+        FROM products
+        <where>
+            <if test="categoryId != null and categoryId != 'none'">
+                categoryId = #{categoryId}
+            </if>
+            <if test="key != null and key != 'none'">
+                <if test="categoryId != null and categoryId != 'none'">
+                    AND
+                </if>
+                ${key} LIKE CONCAT('%', #{word}, '%')
+            </if>
+        </where>
+        <if test="orderByDir != null and orderBy != 'none'">
+            ORDER BY ${orderBy} ${orderByDir}
+        </if>
+        <if test="orderBy == 'none'">
+        	ORDER BY regDate DESC;
+        </if>
+        
+    </select>
+
+    <!-- 카테고리별 물품 조회 -->
+    <!-- select 문은 products 테이블에서 특정 카테고리(categoryId)에 속한 상품을 조회합니다.
+         parameterType="int"는 카테고리 ID를 파라미터로 받습니다. -->
+    <select id="searchByCategoryId" resultType="Product" parameterType="int">
+        SELECT productId, productName, productPrice,
+        productStock, productSold, productInfo, categoryId, image,
+        DATE_FORMAT(createdAt, '%Y-%m-%d %H:%i:%s') AS regDate
+        FROM products
+        WHERE categoryId = #{categoryId};
+    </select>
+
+    <!-- 물품 상세 조회 용 하나 선택 -->
+    <!-- select 문은 products 테이블에서 특정 productId에 해당하는 상품을 조회합니다.
+         parameterType="int"는 상품 ID를 파라미터로 받습니다. -->
+    <select id="selectOne" resultType="Product" parameterType="int">
+        SELECT productId, productName, productPrice, productStock,
+        productSold, productInfo, categoryId, image, DATE_FORMAT(createdAt,
+        '%Y-%m-%d %H:%i:%s') AS regDate
+        FROM products
+        WHERE productId = #{productId};
+    </select>
+
+    <!-- 물품 등록 -->
+    <!-- insert 문은 products 테이블에 새로운 상품을 추가합니다.
+         useGeneratedKeys="true"와 keyProperty="productId"는 자동 생성된 키 값을 반환합니다. -->
+    <insert id="insertProduct" parameterType="Product" keyProperty="productId" useGeneratedKeys="true">
+        <if test="image = null or image = ''">
+            INSERT INTO products (productName, productPrice, productStock, productSold, productInfo, categoryId)
+            VALUES (#{productName}, #{productPrice}, #{productStock}, #{productSold}, #{productInfo}, #{categoryId})
+        </if>
+        <if test="image != null and image != ''">
+            INSERT INTO products (productName, productPrice, productStock, productSold, productInfo, categoryId, image)
+            VALUES (#{productName}, #{productPrice}, #{productStock}, #{productSold}, #{productInfo}, #{categoryId}, #{image})
+        </if>
+    </insert>
+
+    <!-- 물품 전체 조회 -->
+    <!-- select 문은 products 테이블에서 모든 상품을 조회합니다.
+         resultType="Product"는 결과가 Product 객체의 리스트로 반환됨을 나타냅니다. -->
+    <select id="selectAll" resultType="Product">
+        SELECT productId, productName, productPrice, productStock, productSold, categoryId, image,
+        DATE_FORMAT(createdAt, '%Y-%m-%d %H:%i:%s') AS regDate
+        FROM products
+        ORDER BY createdAt DESC;
+    </select>
+
+    <!-- 개별 상품 이름 조회 -->
+    <!-- select 문은 products 테이블에서 특정 productId에 해당하는 상품의 이름을 조회합니다.
+         parameterType="int"는 상품 ID를 파라미터로 받습니다.
+         resultType="String"는 결과가 문자열로 반환됨을 나타냅니다. -->
+    <select id="searchProductName" parameterType="int" resultType="String">
+        SELECT productName
+        FROM products
+        WHERE productId = #{productId};
+    </select>
+
+    <!-- 재고 업데이트 -->
+    <!-- update 문은 products 테이블에서 특정 productId에 해당하는 상품의 재고를 업데이트합니다.
+         parameterType="Map"는 수정할 정보를 담은 맵을 파라미터로 받습니다. -->
+    <update id="updateProduct" parameterType="Map">
+        UPDATE products
+        SET productStock = #{productStock}, productSold = #{productSold}
+        WHERE productId = #{productId};
+    </update>
+
+    <!-- 상품 수정 -->
+    <!-- update 문은 products 테이블에서 특정 productId에 해당하는 상품의 정보를 수정합니다.
+         parameterType="Map"는 수정할 정보를 담은 맵을 파라미터로 받습니다. -->
+    <update id="modifyProduct" parameterType="Map">
+        UPDATE products
+        SET productName = #{productName}, productPrice = #{productPrice}, productStock = #{productStock}, productInfo = #{productInfo}, image = #{image}
+        WHERE productId = #{productId};
+    </update>
+
+    <!-- 상품 삭제 -->
+    <!-- delete 문은 products 테이블에서 특정 productId에 해당하는 상품을 삭제합니다.
+         parameterType="int"는 상품 ID를 파라미터로 받습니다. -->
+    <delete id="deleteProduct" parameterType="int">
+        DELETE FROM products
+        WHERE productId = #{productId};
+    </delete>
+
+</mapper>
