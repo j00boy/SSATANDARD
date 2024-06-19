@@ -1,7 +1,7 @@
 <p align="middle" >
   <img width="200px;" src="https://i.imgur.com/MFKO9qx.jpg"/>
 </p>
-<h1 align="middle">SSATANDARD</h1>
+<h1 align="middle">SPORTS STANDARD</h1>
 <h3 align="middle">운동용품 쇼핑 홈페이지 구현 및 재고관리</h3>
 
 <br/>
